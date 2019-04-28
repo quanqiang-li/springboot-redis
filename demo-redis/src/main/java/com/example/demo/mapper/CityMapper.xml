@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.mapper.CityMapper">
+
+	<select id="getCityById"
+		resultType="com.example.demo.domain.City"
+		parameterType="java.lang.Integer">
+		select * from CITY where id=#{ID}
+	</select>
+
+<!-- 
+useGeneratedKeys 表明自增主键值 ,keyProperty,表示把插入的主键赋值到parameterType哪个属性,
+ -->
+	<insert id="createCityAndGetId" useGeneratedKeys="true" keyProperty="id" parameterType="com.example.demo.domain.City">
+		insert into CITY
+		(name,area_code,create_time)values(#{name},#{areaCode},#{createTime})
+	</insert>
+
+</mapper>
