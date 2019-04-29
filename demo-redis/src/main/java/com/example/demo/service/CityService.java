@@ -13,7 +13,7 @@ import com.example.demo.domain.City;
 import com.example.demo.mapper.CityMapper;
 
 //在redis的key前缀,
-@CacheConfig(cacheNames = "cityCatch")
+@CacheConfig(cacheNames = "cityCache")
 
 @Service
 public class CityService {
@@ -53,8 +53,8 @@ public class CityService {
 	 * @param id
 	 * @return
 	 */
-	// #p0 spring表达式,第一个参数,对象redis的key=cityCatch::{#id}
-	@Cacheable(key = "#p0")
+	// #p0 spring表达式,第一个参数,这里redis的key=cityCatch::{#id},unless排除不缓存,即null不缓存
+	@Cacheable(key = "#p0", unless = "#result == null")
 	public City findByIdWithCache(Integer id) {
 		City city = cityMapper.getCityById(id);
 		log.info("查询city{}来自mysql", id);
