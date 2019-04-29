@@ -14,7 +14,7 @@ import com.example.demo.service.RedisService;
 @RequestMapping("redis")
 public class RedisController {
 
-	@Resource(name = "strRedisTemplate")
+	@Resource(name = "redisTemplate")
 	private RedisTemplate<String, String> template;
 
 //	 @Autowired

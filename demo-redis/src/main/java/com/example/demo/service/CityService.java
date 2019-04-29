@@ -27,6 +27,16 @@ public class CityService {
 
 	@Autowired
 	private CityMapper cityMapper;
+	
+	/**
+	 * 直接查数据库
+	 * @param id
+	 * @return
+	 */
+	public City getCity(Integer id) {
+		City city = cityMapper.getCityById(id);
+		return city;
+	}
 
 	/**
 	 * 自己写逻辑,使用redis作为缓存

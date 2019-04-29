@@ -1,7 +1,11 @@
 package com.example.demo.controller;
 
+import java.lang.Character.UnicodeBlock;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.tomcat.util.buf.HexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,18 @@ public class MysqlController {
 	@Autowired
 	private CityService cityService;
 	private Logger log = LoggerFactory.getLogger(this.getClass());
+	@GetMapping("selectDB")
+	
+	/**
+	 * 直接查数据库
+	 * @param id
+	 * @return
+	 */
+	public String selectDB(Integer id,HttpServletRequest request) {
+		log.info("查询city:id=" + id);
+		//return cityService.findById(id).toString();
+		return cityService.getCity(id).toString();
+	}
 
 	@GetMapping("select")
 	public String select(Integer id) {
@@ -42,4 +58,5 @@ public class MysqlController {
 		cityService.deleteCity(id);
 		return "删除city:id=" + id;
 	}
+	
 }
