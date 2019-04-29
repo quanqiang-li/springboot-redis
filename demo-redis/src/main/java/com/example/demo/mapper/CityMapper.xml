@@ -11,12 +11,14 @@
 		select * from CITY where id=#{ID}
 	</select>
 
-<!-- 
-useGeneratedKeys 表明自增主键值 ,keyProperty,表示把插入的主键赋值到parameterType哪个属性,
- -->
-	<insert id="createCityAndGetId" useGeneratedKeys="true" keyProperty="id" parameterType="com.example.demo.domain.City">
+	<!-- useGeneratedKeys 表明自增主键值 ,keyProperty,表示把插入的主键赋值到parameterType哪个属性, -->
+	<insert id="createCityAndGetId" useGeneratedKeys="true"
+		keyProperty="id" parameterType="com.example.demo.domain.City">
 		insert into CITY
 		(name,area_code,create_time)values(#{name},#{areaCode},#{createTime})
 	</insert>
+
+	<delete id="deleteCityById" parameterType="int"> delete from CITY
+		where id=#{id}</delete>
 
 </mapper>

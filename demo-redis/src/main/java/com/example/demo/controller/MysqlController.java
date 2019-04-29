@@ -23,7 +23,8 @@ public class MysqlController {
 	@GetMapping("select")
 	public String select(Integer id) {
 		log.info("查询city:id=" + id);
-		return cityService.findById(id).toString();
+		//return cityService.findById(id).toString();
+		return cityService.findByIdWithCache(id).toString();
 	}
 	@GetMapping("create")
 	public String create(String name,String areaCode) {
@@ -31,7 +32,14 @@ public class MysqlController {
 		city.setAreaCode(areaCode);
 		city.setCreateTime(new Date());
 		city.setName(name);;
-		Integer result = cityService.createCity(city);
-		return "插入条数:" + result + ",插入主键id:" + city.getId();
+		cityService.createCity(city);
+		return "插入主键id:" + city.getId();
+	}
+	
+	@GetMapping("delete")
+	public String delete(Integer id) {
+		log.info("删除city:id=" + id);
+		cityService.deleteCity(id);
+		return "删除city:id=" + id;
 	}
 }

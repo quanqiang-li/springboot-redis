@@ -18,4 +18,6 @@ public interface CityMapper {
 	 * @return
 	 */
 	int createCityAndGetId(City city);
+	
+	void deleteCityById(Integer id);
 }

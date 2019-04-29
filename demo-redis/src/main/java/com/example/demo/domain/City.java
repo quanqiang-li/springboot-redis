@@ -1,9 +1,15 @@
 package com.example.demo.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class City {
+public class City implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private Integer id;
 	private String name;
 	private String areaCode;
@@ -47,6 +53,6 @@ public class City {
 
 	@Override
 	public String toString() {
-		return "id:" + id + ",name:" + name;
+		return "id:" + id + ",name:" + name + ",areaCode:" + areaCode + ",createTime:"+createTime;
 	}
 }
