@@ -297,9 +297,9 @@ public class RedisService {
 	 * @param value
 	 * @param scoure
 	 */
-	public void incrementScore(String key, Object value, double scoure) {
+	public void incrementScore(String key, Object value, double score) {
 		ZSetOperations<String, Object> zset = redisTemplate.opsForZSet();
-		zset.incrementScore(key, value, scoure);
+		zset.incrementScore(key, value, score);
 	}
 
 	/**

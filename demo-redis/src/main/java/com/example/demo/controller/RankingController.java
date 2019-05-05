@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.domain.UserScore;
 import com.example.demo.service.RangingService;
 
 @RestController
@@ -67,13 +68,19 @@ public class RankingController {
 
 
 
-
-//    @ResponseBody
-//    @RequestMapping("/sale/increScore")
-//    public String increSaleScore(String uid, Integer score) {
-//        rankingService.increSaleSocre(uid, score);
-//        return "success";
-//    }
+/**
+ * 添加用户积分
+ * @param uid
+ * @param name
+ * @param score
+ * @return
+ */
+    @ResponseBody
+    @RequestMapping("/sale/increScore")
+    public String increSaleScore(String uid,String name, Integer score) {
+        rankingService.increSaleSocre(uid, name,score);
+        return "success";
+    }
 
 
     @ResponseBody
@@ -84,7 +91,7 @@ public class RankingController {
 
     @ResponseBody
     @RequestMapping("/sale/top")
-    public List<Map<String,Object>> reverseZRankWithRank(long start,long end) {
+    public List<UserScore> reverseZRankWithRank(long start,long end) {
         return rankingService.reverseZRankWithRank(start,end);
     }
 
