@@ -79,7 +79,7 @@ public class RankingController {
     @RequestMapping("/sale/increScore")
     public String increSaleScore(String uid,String name, Integer score) {
         rankingService.increSaleSocre(uid, name,score);
-        return "success";
+        return "success"; 
     }
 
 
