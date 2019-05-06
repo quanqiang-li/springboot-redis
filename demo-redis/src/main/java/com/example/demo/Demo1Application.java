@@ -4,6 +4,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @SpringBootApplication
@@ -12,6 +13,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableCaching
 //开启session共享到redis,超时时间60s,默认1800s
 @EnableRedisHttpSession(maxInactiveIntervalInSeconds = 180)
+@EnableScheduling
 public class Demo1Application {
 
 	public static void main(String[] args) {

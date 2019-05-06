@@ -21,7 +21,7 @@ public class RangingService {
 
 	private static final String RANKGNAME = "user_score";
 
-	private static final String SALESCORE = "sale_score_rank:";
+	public static final String SALESCORE = "sale_score_rank:";
 
 	@Autowired
 	private RedisService redisService;

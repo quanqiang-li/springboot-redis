@@ -1,5 +1,7 @@
 package com.example.demo.mapper;
 
+import java.util.List;
+
 import com.example.demo.domain.UserScore;
 
 public interface UserScoreMapper {
@@ -50,4 +52,6 @@ public interface UserScoreMapper {
      * @mbggenerated Tue Apr 30 10:16:46 CST 2019
      */
     int updateByPrimaryKey(UserScore record);
+
+	List<UserScore> selectAll();
 }
