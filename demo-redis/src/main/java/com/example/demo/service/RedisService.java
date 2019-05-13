@@ -1,10 +1,14 @@
 package com.example.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -98,6 +102,45 @@ public class RedisService {
 		}
 		return result;
 	}
+	
+
+    /**
+     * 写入缓存
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    public boolean decr(final String key, int value) {
+        boolean result = false;
+        try {
+            ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
+            operations.increment(key,-value);
+            result = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+    /**
+     * 写入缓存
+     *
+     * @param key
+     * @return
+     */
+    public boolean incr(final String key) {
+        boolean result = false;
+        try {
+            ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
+            operations.increment(key,1);
+            result = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
 	/**
 	 * 批量删除对应的value
@@ -323,5 +366,43 @@ public class RedisService {
 		Set<ZSetOperations.TypedTuple<Object>> ret = zset.reverseRangeWithScores(key, start, end);
 		return ret;
 	}
+	
+
+
+    public Boolean bloomFilterAdd(String filterName,int value){
+        DefaultRedisScript<Boolean> bloomAdd = new DefaultRedisScript<>();
+        bloomAdd.setScriptSource(new ResourceScriptSource(new ClassPathResource("bloomFilterAdd.lua")));
+        bloomAdd.setResultType(Boolean.class);
+        List<Object> keyList= new ArrayList<>();
+        keyList.add(filterName);
+        keyList.add(value+"");
+        Boolean result = (Boolean) redisTemplate.execute(bloomAdd,keyList);
+        return result;
+    }
+
+
+
+    public Boolean bloomFilterExists(String filterName,int value){
+        DefaultRedisScript<Boolean> bloomExists= new DefaultRedisScript<>();
+        bloomExists.setScriptSource(new ResourceScriptSource(new ClassPathResource("bloomFilterExist.lua")));
+        bloomExists.setResultType(Boolean.class);
+        List<Object> keyList= new ArrayList<>();
+        keyList.add(filterName);
+        keyList.add(value+"");
+        Boolean result = (Boolean) redisTemplate.execute(bloomExists,keyList);
+        return result;
+    }
+
+    public Boolean getAndIncrLua(String key){
+        DefaultRedisScript<Boolean> bloomExists= new DefaultRedisScript<>();
+        bloomExists.setScriptSource(new ResourceScriptSource(new ClassPathResource("secKillIncr.lua")));
+        bloomExists.setResultType(Boolean.class);
+        List<Object> keyList= new ArrayList<>();
+        keyList.add(key);
+        Boolean result = (Boolean) redisTemplate.execute(bloomExists,keyList);
+        return result;
+    }
+
+
 
 }

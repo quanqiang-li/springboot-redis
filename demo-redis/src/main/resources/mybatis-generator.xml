@@ -15,6 +15,9 @@
 		<!-- <plugin type="tk.mybatis.mapper.generator.MapperPlugin"> <property 
 			name="mappers" value="tk.mybatis.mapper.common.Mapper" /> <property name="caseSensitive" 
 			value="true" /> </plugin> -->
+		<commentGenerator
+			type="com.example.demo.utils.MBGeneratorComments">
+		</commentGenerator>
 		<jdbcConnection
 			driverClass="${spring.datasource.driver-class-name}"
 			connectionURL="${spring.datasource.url}"
@@ -23,6 +26,7 @@
 			<!-- 识别mysql自增主键,mapper自动生成CRUDByPrimaryKey -->
 			<property name="useInformationSchema" value="true" />
 		</jdbcConnection>
+
 		<javaModelGenerator
 			targetPackage="com.example.demo.domain"
 			targetProject=".\src\main\java">
@@ -38,9 +42,10 @@
 			targetPackage="com.example.demo.mapper" type="XMLMAPPER"
 			targetProject=".\src\main\java">
 		</javaClientGenerator>
-		<table tableName="user_score" domainObjectName="UserScore"
-			enableSelectByExample="false" enableUpdateByExample="false"
-			enableDeleteByExample="false" enableCountByExample="false">
+		<table tableName="red_packet_record"
+			domainObjectName="RedPacketRecord" enableSelectByExample="false"
+			enableUpdateByExample="false" enableDeleteByExample="false"
+			enableCountByExample="false">
 			<!--<property name="useActualColumnNames" value="true"></property> 不使用驼峰式，严格按字段名 -->
 		</table>
 	</context>
