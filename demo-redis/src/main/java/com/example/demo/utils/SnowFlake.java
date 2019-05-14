@@ -1,9 +1,18 @@
 package com.example.demo.utils;
 
+import java.util.Calendar;
+
+/**
+ * 雪花算法,从高到低,1位符号+41位时间戳+5位数据标识+5位机器标识+12位自增序列号 0
+ * 00000001100111100011011101110111100101110 00000 00000 000000000101
+ * 
+ * @author 2476056494@qq.com
+ *
+ */
 public class SnowFlake {
 
 	/**
-	 * 起始的时间戳:这个时间戳自己随意获取，比如自己代码的时间戳
+	 * 起始的时间戳:这个时间戳自己随意获取，比如自己代码的时间戳,这里是2018-12-04 14:05:01
 	 */
 	private final static long START_STMP = 1543903501000L;
 
@@ -13,16 +22,11 @@ public class SnowFlake {
 	private final static long SEQUENCE_BIT = 12; // 序列号占用的位数
 	private final static long MACHINE_BIT = 5; // 机器标识占用的位数
 	private final static long DATACENTER_BIT = 5;// 数据中心占用的位数
+	private final static long STMP_BIT = 41; // 时间戳占用的位数
 
 	/**
 	 * 每一部分的最大值：先进行左移运算，再同-1进行异或运算；异或：相同位置相同结果为0，不同结果为1
 	 */
-	/** 用位运算计算出最大支持的数据中心数量：31 */
-	private final static long MAX_DATACENTER_NUM = -1L ^ (-1L << DATACENTER_BIT);
-
-	/** 用位运算计算出最大支持的机器数量：31 */
-	private final static long MAX_MACHINE_NUM = -1L ^ (-1L << MACHINE_BIT);
-
 	/** 用位运算计算出12位能存储的最大正整数：4095,-1先左移,然后再和-1异或,高位全变成了0,低位全变成了1,即这里为2^12次幂 */
 	private final static long MAX_SEQUENCE = -1L ^ (-1L << SEQUENCE_BIT);
 
@@ -100,7 +104,33 @@ public class SnowFlake {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(SnowFlake.nextId());
+		//批量生成100个id
+//		for (int i = 0; i < 100; i++) {
+//			long nextId = SnowFlake.nextId();
+//			System.out.println(nextId);
+//			System.out.println(leftZero(nextId) + Long.toBinaryString(nextId));
+//		}
+//		58295813561909248
+//		0 00000001100111100011011101110111100101101 00000 00000 000000000000
+//		58295813561909249
+//		0 00000001100111100011011101110111100101101 00000 00000 000000000001
+		//选择生成的id,反向推导出各个位上的数值
+		long id = 58295813566103557L;
+		long sequence2 = getSequence(id);
+		System.out.println(sequence2);
+		System.out.println(leftZero(sequence2) + Long.toBinaryString(sequence2));
+		long machine = getMachine(id);
+		System.out.println(machine);
+		System.out.println(leftZero(machine) + Long.toBinaryString(machine));
+		long datacenter = getDatacenter(id);
+		System.out.println(datacenter);
+		System.out.println(leftZero(datacenter) + Long.toBinaryString(datacenter));
+		long stmp = getStmp(id);
+		System.out.println(stmp);
+		System.out.println(leftZero(stmp) + Long.toBinaryString(stmp));
+		Calendar instance = Calendar.getInstance();
+		instance.setTimeInMillis(START_STMP + stmp);
+		System.out.println(instance.getTime());
 	}
 
 	/**
@@ -109,13 +139,64 @@ public class SnowFlake {
 	 * @param value
 	 * @return
 	 */
-	private static String leftZero(Long l) {
+	private static String leftZero(Long id) {
 		StringBuffer sb = new StringBuffer();
-		int numberOfLeadingZeros = Long.numberOfLeadingZeros(l);
+		int numberOfLeadingZeros = Long.numberOfLeadingZeros(id);
+		// id==0,最多补63个,本身占一位
+		numberOfLeadingZeros = numberOfLeadingZeros == 64 ? 63 : numberOfLeadingZeros;
 		for (int i = 0; i < numberOfLeadingZeros; i++) {
 			sb.append("0");
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * 反向推导出序列号
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private static long getSequence(Long id) {
+		// 先把-1无符号右移,得到二进制低位SEQUENCE_BIT个1,高位全是0;最后和id与操作,得出后面SEQUENCE_BIT位的结果
+		long sequence = (-1L >>> (1 + STMP_BIT + DATACENTER_BIT + MACHINE_BIT)) & id;
+		return sequence;
+	}
+
+	/**
+	 * 反向推导出机器号
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private static long getMachine(Long id) {
+		// 先把-1无符号右移,得到二进制低位MACHINE_BIT个1,高位全是0;最后id通过右移把MACHINE_BIT放在低位参加与操作,得出后面MACHINE_BIT位的结果
+		long machine = (-1L >>> (1 + STMP_BIT + DATACENTER_BIT + SEQUENCE_BIT)) & (id >> SEQUENCE_BIT);
+		return machine;
+	}
+
+	/**
+	 * 反向推导出数据标志位
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private static long getDatacenter(Long id) {
+		// 先把-1无符号右移,得到二进制低位DATACENTER_BIT个1,高位全是0;最后id通过右移把MACHINE_BIT放在低位参加与操作,得出后面DATACENTER_BIT位的结果
+		long machine = (-1L >>> (1 + STMP_BIT + MACHINE_BIT + SEQUENCE_BIT)) & (id >> (MACHINE_BIT + SEQUENCE_BIT));
+		return machine;
+	}
+
+	/**
+	 * 反向推导出时间戳
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private static long getStmp(Long id) {
+		// 先把-1无符号右移,得到二进制低位STMP_BIT个1,高位全是0;最后id通过右移把STMP_BIT放在低位参加与操作,得出后面STMP_BIT位的结果
+		long stmp = (-1L >>> (1 + DATACENTER_BIT + MACHINE_BIT + SEQUENCE_BIT))
+				& (id >> (DATACENTER_BIT + MACHINE_BIT + SEQUENCE_BIT));
+		return stmp;
 	}
 
 }
